@@ -443,7 +443,7 @@ Window.__index = Window
 local SIDEBAR_W = 150
 local WIN_W     = 720
 local WIN_H     = 460
-local TOPBAR_H  = 38
+local TOPBAR_H  = 24
 
 function Window._new(config)
     local self = setmetatable({}, Window)
