@@ -38,6 +38,29 @@ local ICO_MINUS = (Icons and Icons["lucide-minus"]) or "rbxassetid://10734896206
 local ICO_X     = (Icons and Icons["lucide-x"])     or "rbxassetid://10747384394"
 
 -- ═══════════════════════════════════════════════════
+--  HELPER : résolution d'une icône
+--  Accepte :
+--    "lucide-home"   → cherche dans la table Icons
+--    123456789       → rbxassetid brut (number)
+--    nil             → retourne nil
+-- ═══════════════════════════════════════════════════
+local function ResolveIcon(icon)
+    if not icon then return nil end
+    if type(icon) == "number" then
+        return "rbxassetid://" .. tostring(icon)
+    end
+    if type(icon) == "string" then
+        -- Nom Lucide (ex: "lucide-home")
+        if Icons and Icons[icon] then
+            return Icons[icon]   -- déjà au format "rbxassetid://..."
+        end
+        -- Fallback : traité comme un asset ID string brut
+        return icon
+    end
+    return nil
+end
+
+-- ═══════════════════════════════════════════════════
 --  THÈME
 -- ═══════════════════════════════════════════════════
 local T = {
@@ -442,10 +465,36 @@ function Window:_BuildAndPlayLoading()
     Corner(bg, 12)
     Stroke(bg, T.Border, 1)
 
+    -- Icône au-dessus du titre (si définie dans LoadingSettings ou config principale)
+    local loadIconAsset = ResolveIcon(cfg.Icon or self._config.Icon)
+    local titleOffsetY  = -40
+    if loadIconAsset then
+        titleOffsetY = -16
+        -- Fond de l'icône
+        local iconWrap = New("Frame", {
+            Size             = UDim2.fromOffset(52, 52),
+            Position         = UDim2.new(0.5, -26, 0.5, -90),
+            BackgroundColor3 = T.Item,
+            BorderSizePixel  = 0,
+            ZIndex           = 21,
+            Parent           = bg,
+        })
+        Corner(iconWrap, 12)
+        New("ImageLabel", {
+            Size                   = UDim2.new(1, -14, 1, -14),
+            Position               = UDim2.new(0, 7, 0, 7),
+            BackgroundTransparency = 1,
+            Image                  = loadIconAsset,
+            ImageColor3            = T.Accent,
+            ZIndex                 = 22,
+            Parent                 = iconWrap,
+        })
+    end
+
     -- Titre
     New("TextLabel", {
         Size                   = UDim2.new(1, 0, 0, 36),
-        Position               = UDim2.new(0, 0, 0.5, -40),
+        Position               = UDim2.new(0, 0, 0.5, titleOffsetY),
         BackgroundTransparency = 1,
         Text                   = cfg.Title or self._config.Name or "Script",
         TextColor3             = T.Text,
@@ -459,7 +508,7 @@ function Window:_BuildAndPlayLoading()
     -- Sous-titre
     New("TextLabel", {
         Size                   = UDim2.new(1, 0, 0, 20),
-        Position               = UDim2.new(0, 0, 0.5, 4),
+        Position               = UDim2.new(0, 0, 0.5, titleOffsetY + 36 + 4),
         BackgroundTransparency = 1,
         Text                   = cfg.Subtitle or "",
         TextColor3             = T.Muted,
@@ -473,7 +522,7 @@ function Window:_BuildAndPlayLoading()
     -- Barre de progression
     local barBG = New("Frame", {
         Size             = UDim2.fromOffset(220, 3),
-        Position         = UDim2.new(0.5, -110, 0.5, 42),
+        Position         = UDim2.new(0.5, -110, 0.5, titleOffsetY + 36 + 4 + 26),
         BackgroundColor3 = T.Border,
         BorderSizePixel  = 0,
         ZIndex           = 21,
@@ -577,8 +626,9 @@ function Window:_BuildSidebar(cfg)
         Parent           = sidebar,
     })
 
-    local titleX = 12
-    if cfg.Icon then
+    local titleX   = 12
+    local iconAsset = ResolveIcon(cfg.Icon)
+    if iconAsset then
         local iconWrap = New("Frame", {
             Size             = UDim2.fromOffset(26, 26),
             Position         = UDim2.new(0, 12, 0.5, -13),
@@ -592,11 +642,12 @@ function Window:_BuildSidebar(cfg)
             Size                   = UDim2.new(1, -6, 1, -6),
             Position               = UDim2.new(0, 3, 0, 3),
             BackgroundTransparency = 1,
-            Image                  = "rbxassetid://" .. tostring(cfg.Icon),
+            Image                  = iconAsset,
+            ImageColor3            = T.Text,
             ZIndex                 = 5,
             Parent                 = iconWrap,
         })
-        titleX = 44
+        titleX = 46
     end
 
     New("TextLabel", {
