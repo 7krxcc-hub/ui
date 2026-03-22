@@ -825,8 +825,8 @@ function Window:_BuildTopBar(cfg)
     })
     -- ── Bouton réduire (tiret) ─────────────────────
     local btnMinimize = New("TextButton", {
-        Size             = UDim2.fromOffset(20, 20),
-        Position         = UDim2.new(1, -50, 0.5, -10),
+        Size             = UDim2.fromOffset(21, 21),
+        Position         = UDim2.new(1, -51, 0.5, -10),
         BackgroundColor3 = T.Item,
         Text             = "",
         BorderSizePixel  = 0,
@@ -836,11 +836,11 @@ function Window:_BuildTopBar(cfg)
     })
     Corner(btnMinimize, 5)
     New("ImageLabel", {
-        Size                   = UDim2.fromOffset(8, 8),
-        Position               = UDim2.new(0.5, -4, 0.5, -4),
+        Size                   = UDim2.fromOffset(14, 14),
+        Position               = UDim2.new(0.5, -7, 0.5, -7),
         BackgroundTransparency = 1,
         Image                  = ICO_MINUS,
-        ImageColor3            = T.Muted,
+        ImageColor3            = T.Text,
         ZIndex                 = 5,
         Parent                 = btnMinimize,
     })
@@ -855,7 +855,7 @@ function Window:_BuildTopBar(cfg)
     end)
 
     local btnClose = New("TextButton", {
-        Size             = UDim2.fromOffset(20, 20),
+        Size             = UDim2.fromOffset(21, 21),
         Position         = UDim2.new(1, -26, 0.5, -10),
         BackgroundColor3 = T.Item,
         Text             = "",
@@ -866,11 +866,11 @@ function Window:_BuildTopBar(cfg)
     })
     Corner(btnClose, 5)
     New("ImageLabel", {
-        Size                   = UDim2.fromOffset(8, 8),
-        Position               = UDim2.new(0.5, -4, 0.5, -4),
+        Size                   = UDim2.fromOffset(14, 14),
+        Position               = UDim2.new(0.5, -7, 0.5, -7),
         BackgroundTransparency = 1,
         Image                  = ICO_X,
-        ImageColor3            = T.Muted,
+        ImageColor3            = T.Text,
         ZIndex                 = 5,
         Parent                 = btnClose,
     })
