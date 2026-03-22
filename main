@@ -77,6 +77,8 @@ local T = {
     ItemHover  = Color3.fromRGB(36,  36,  46),
     -- Couleurs
     Accent     = Color3.fromRGB(105, 108, 225),
+    AccentBg   = Color3.fromRGB(105, 108, 225),   -- fond tab actif (+ transparency)
+    AccentFg   = Color3.fromRGB(72,  75,  190),   -- texte/icône tab actif (plus foncé)
     Border     = Color3.fromRGB(40,  40,  52),
     GroupBorder= Color3.fromRGB(36,  36,  48),
     -- Texte
@@ -254,10 +256,28 @@ function Tab._new(navFrame, contentFrame, name, icon, layoutOrder)
     })
     Corner(btn, 7)
 
-    -- Texte du tab (toujours ancré à gauche)
+    -- Icône à gauche (optionnelle)
+    local iconAsset = ResolveIcon(icon)
+    local iconImg   = nil
+    local textLeft  = 10
+
+    if iconAsset then
+        iconImg = New("ImageLabel", {
+            Size                   = UDim2.fromOffset(14, 14),
+            Position               = UDim2.new(0, 10, 0.5, -7),
+            BackgroundTransparency = 1,
+            Image                  = iconAsset,
+            ImageColor3            = T.Muted,
+            ZIndex                 = 4,
+            Parent                 = btn,
+        })
+        textLeft = 30
+    end
+
+    -- Texte du tab
     local lbl = New("TextLabel", {
-        Size                   = UDim2.new(1, -32, 1, 0),
-        Position               = UDim2.new(0, 10, 0, 0),
+        Size                   = UDim2.new(1, -(textLeft + 8), 1, 0),
+        Position               = UDim2.new(0, textLeft, 0, 0),
         BackgroundTransparency = 1,
         Text                   = name,
         TextColor3             = T.Muted,
@@ -267,20 +287,6 @@ function Tab._new(navFrame, contentFrame, name, icon, layoutOrder)
         ZIndex                 = 4,
         Parent                 = btn,
     })
-
-    -- Icône à droite du nom (optionnelle)
-    local iconAsset = ResolveIcon(icon)
-    if iconAsset then
-        New("ImageLabel", {
-            Size                   = UDim2.fromOffset(14, 14),
-            Position               = UDim2.new(1, -22, 0.5, -7),
-            BackgroundTransparency = 1,
-            Image                  = iconAsset,
-            ImageColor3            = T.Muted,
-            ZIndex                 = 4,
-            Parent                 = btn,
-        })
-    end
 
     -- ── Page de contenu ───────────────────────
     local scroll = New("ScrollingFrame", {
@@ -309,26 +315,37 @@ function Tab._new(navFrame, contentFrame, name, icon, layoutOrder)
         Parent        = scroll,
     })
 
-    self._btn    = btn
-    self._lbl    = lbl
-    self._scroll = scroll
+    self._btn     = btn
+    self._lbl     = lbl
+    self._iconImg = iconImg
+    self._scroll  = scroll
     return self
 end
 
 -- Active visuellement ce tab
 function Tab:_Select()
     self._scroll.Visible = true
-    Tween(self._btn, { BackgroundTransparency = 0 }, 0.14)
+    -- Fond accent très léger
+    self._btn.BackgroundColor3    = T.AccentBg
+    Tween(self._btn, { BackgroundTransparency = 0.82 }, 0.14)
+    -- Texte + icône en AccentFg (foncé, bien lisible sur fond clair)
     self._lbl.Font       = Enum.Font.GothamBold
-    self._lbl.TextColor3 = T.Text
+    self._lbl.TextColor3 = T.AccentFg
+    if self._iconImg then
+        self._iconImg.ImageColor3 = T.AccentFg
+    end
 end
 
 -- Désactive visuellement ce tab
 function Tab:_Deselect()
     self._scroll.Visible = false
+    self._btn.BackgroundColor3 = T.AccentBg
     Tween(self._btn, { BackgroundTransparency = 1 }, 0.14)
     self._lbl.Font       = Enum.Font.Gotham
     self._lbl.TextColor3 = T.Muted
+    if self._iconImg then
+        self._iconImg.ImageColor3 = T.Muted
+    end
 end
 
 -- Crée un GroupBox dans ce tab
@@ -445,7 +462,18 @@ end
 
 -- ── Écran de chargement ─────────────────────────────
 function Window:_BuildAndPlayLoading()
-    local cfg = self._config.LoadingSettings or {}
+    -- Héritage automatique depuis la config principale
+    local cfg = {
+        Title    = self._config.Name,
+        Subtitle = self._config.Subtitle,
+        Icon     = self._config.Icon,
+    }
+    -- Surcharge possible via LoadingSettings
+    if self._config.LoadingSettings then
+        for k, v in pairs(self._config.LoadingSettings) do
+            cfg[k] = v
+        end
+    end
 
     local gui = New("ScreenGui", {
         Name           = "Requiem_Load",
