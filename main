@@ -834,7 +834,7 @@ function Window:_BuildTopBar(cfg)
         ZIndex           = 4,
         Parent           = topBar,
     })
-    Corner(btnMinimize, 100)
+    Corner(btnMinimize, 5)
     New("ImageLabel", {
         Size                   = UDim2.fromOffset(10, 10),
         Position               = UDim2.new(0.5, -5, 0.5, -5),
@@ -864,7 +864,7 @@ function Window:_BuildTopBar(cfg)
         ZIndex           = 4,
         Parent           = topBar,
     })
-    Corner(btnClose, 100)
+    Corner(btnClose, 5)
     New("ImageLabel", {
         Size                   = UDim2.fromOffset(10, 10),
         Position               = UDim2.new(0.5, -5, 0.5, -5),
