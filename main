@@ -787,15 +787,15 @@ function Window:_BuildTopBar(cfg)
 
     if iconAsset then
         New("ImageLabel", {
-            Size                   = UDim2.fromOffset(14, 14),
-            Position               = UDim2.new(0, 10, 0.5, -7),
+            Size                   = UDim2.fromOffset(16, 16),
+            Position               = UDim2.new(0, 10, 0.5, -8),
             BackgroundTransparency = 1,
             Image                  = iconAsset,
             ImageColor3            = T.Accent,
             ZIndex                 = 5,
             Parent                 = topBar,
         })
-        textLeft = 28
+        textLeft = 30
     end
 
     New("TextLabel", {
@@ -804,7 +804,7 @@ function Window:_BuildTopBar(cfg)
         BackgroundTransparency = 1,
         Text                   = string.upper(cfg.Name or "Script"),
         TextColor3             = T.Text,
-        TextSize               = 10,
+        TextSize               = 11,
         Font                   = Enum.Font.GothamBold,
         TextXAlignment         = Enum.TextXAlignment.Left,
         ZIndex                 = 5,
@@ -817,7 +817,7 @@ function Window:_BuildTopBar(cfg)
         BackgroundTransparency = 1,
         Text                   = cfg.Subtitle or "",
         TextColor3             = T.Muted,
-        TextSize               = 9,
+        TextSize               = 10,
         Font                   = Enum.Font.Gotham,
         TextXAlignment         = Enum.TextXAlignment.Left,
         ZIndex                 = 5,
