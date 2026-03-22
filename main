@@ -745,8 +745,8 @@ function Window:_BuildTopBar(cfg)
 
     -- ── Bouton réduire (tiret) ─────────────────────
     local btnMinimize = New("TextButton", {
-        Size             = UDim2.fromOffset(38, 38),
-        Position         = UDim2.new(1, -76, 0, 0),
+        Size             = UDim2.fromOffset(22, 22),
+        Position         = UDim2.new(1, -60, 0.5, -11),
         BackgroundColor3 = T.Item,
         Text             = "",
         BorderSizePixel  = 0,
@@ -754,9 +754,10 @@ function Window:_BuildTopBar(cfg)
         ZIndex           = 4,
         Parent           = topBar,
     })
+    Corner(btnMinimize, 100)
     New("ImageLabel", {
-        Size                   = UDim2.fromOffset(14, 14),
-        Position               = UDim2.new(0.5, -7, 0.5, -7),
+        Size                   = UDim2.fromOffset(12, 12),
+        Position               = UDim2.new(0.5, -6, 0.5, -6),
         BackgroundTransparency = 1,
         Image                  = ICO_MINUS,
         ImageColor3            = T.Muted,
@@ -775,29 +776,30 @@ function Window:_BuildTopBar(cfg)
 
     -- ── Bouton fermer (croix) ──────────────────────
     local btnClose = New("TextButton", {
-        Size             = UDim2.fromOffset(38, 38),
-        Position         = UDim2.new(1, -38, 0, 0),
-        BackgroundColor3 = Color3.fromRGB(180, 48, 48),
+        Size             = UDim2.fromOffset(22, 22),
+        Position         = UDim2.new(1, -32, 0.5, -11),
+        BackgroundColor3 = T.Item,
         Text             = "",
         BorderSizePixel  = 0,
         AutoButtonColor  = false,
         ZIndex           = 4,
         Parent           = topBar,
     })
+    Corner(btnClose, 100)
     New("ImageLabel", {
-        Size                   = UDim2.fromOffset(14, 14),
-        Position               = UDim2.new(0.5, -7, 0.5, -7),
+        Size                   = UDim2.fromOffset(12, 12),
+        Position               = UDim2.new(0.5, -6, 0.5, -6),
         BackgroundTransparency = 1,
         Image                  = ICO_X,
-        ImageColor3            = T.White,
+        ImageColor3            = T.Muted,
         ZIndex                 = 5,
         Parent                 = btnClose,
     })
     btnClose.MouseEnter:Connect(function()
-        Tween(btnClose, { BackgroundColor3 = Color3.fromRGB(210, 60, 60) }, 0.12)
+        Tween(btnClose, { BackgroundColor3 = Color3.fromRGB(200, 55, 55) }, 0.12)
     end)
     btnClose.MouseLeave:Connect(function()
-        Tween(btnClose, { BackgroundColor3 = Color3.fromRGB(180, 48, 48) }, 0.12)
+        Tween(btnClose, { BackgroundColor3 = T.Item }, 0.12)
     end)
     btnClose.MouseButton1Click:Connect(function()
         self:_ShowCloseConfirm()
