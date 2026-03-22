@@ -825,8 +825,8 @@ function Window:_BuildTopBar(cfg)
     })
     -- ── Bouton réduire (tiret) ─────────────────────
     local btnMinimize = New("TextButton", {
-        Size             = UDim2.fromOffset(20, 20),
-        Position         = UDim2.new(1, -50, 0.5, -10),
+        Size             = UDim2.fromOffset(26, 26),
+        Position         = UDim2.new(1, -58, 0.5, -13),
         BackgroundColor3 = T.Item,
         Text             = "",
         BorderSizePixel  = 0,
@@ -834,10 +834,10 @@ function Window:_BuildTopBar(cfg)
         ZIndex           = 4,
         Parent           = topBar,
     })
-    Corner(btnMinimize, 5)
+    Corner(btnMinimize, 6)
     New("ImageLabel", {
-        Size                   = UDim2.fromOffset(10, 10),
-        Position               = UDim2.new(0.5, -5, 0.5, -5),
+        Size                   = UDim2.fromOffset(12, 12),
+        Position               = UDim2.new(0.5, -6, 0.5, -6),
         BackgroundTransparency = 1,
         Image                  = ICO_MINUS,
         ImageColor3            = T.Muted,
@@ -855,8 +855,8 @@ function Window:_BuildTopBar(cfg)
     end)
 
     local btnClose = New("TextButton", {
-        Size             = UDim2.fromOffset(20, 20),
-        Position         = UDim2.new(1, -26, 0.5, -10),
+        Size             = UDim2.fromOffset(26, 26),
+        Position         = UDim2.new(1, -28, 0.5, -13),
         BackgroundColor3 = T.Item,
         Text             = "",
         BorderSizePixel  = 0,
@@ -864,10 +864,10 @@ function Window:_BuildTopBar(cfg)
         ZIndex           = 4,
         Parent           = topBar,
     })
-    Corner(btnClose, 5)
+    Corner(btnClose, 6)
     New("ImageLabel", {
-        Size                   = UDim2.fromOffset(10, 10),
-        Position               = UDim2.new(0.5, -5, 0.5, -5),
+        Size                   = UDim2.fromOffset(12, 12),
+        Position               = UDim2.new(0.5, -6, 0.5, -6),
         BackgroundTransparency = 1,
         Image                  = ICO_X,
         ImageColor3            = T.Muted,
