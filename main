@@ -825,8 +825,8 @@ function Window:_BuildTopBar(cfg)
     })
     -- ── Bouton réduire (tiret) ─────────────────────
     local btnMinimize = New("TextButton", {
-        Size             = UDim2.fromOffset(18, 18),
-        Position         = UDim2.new(1, -48, 0.5, -9),
+        Size             = UDim2.fromOffset(20, 20),
+        Position         = UDim2.new(1, -50, 0.5, -10),
         BackgroundColor3 = T.Item,
         Text             = "",
         BorderSizePixel  = 0,
@@ -855,8 +855,8 @@ function Window:_BuildTopBar(cfg)
     end)
 
     local btnClose = New("TextButton", {
-        Size             = UDim2.fromOffset(18, 18),
-        Position         = UDim2.new(1, -26, 0.5, -9),
+        Size             = UDim2.fromOffset(20, 20),
+        Position         = UDim2.new(1, -26, 0.5, -10),
         BackgroundColor3 = T.Item,
         Text             = "",
         BorderSizePixel  = 0,
