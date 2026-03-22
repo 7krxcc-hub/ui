@@ -139,27 +139,28 @@ end
 -- ═══════════════════════════════════════════════════
 --  CLASSE : GroupBox
 --  Un container titré dans un Tab.
+--  type : "full" (100% largeur) ou "half" (50%)
 -- ═══════════════════════════════════════════════════
 local GroupBox = {}
 GroupBox.__index = GroupBox
 
-function GroupBox._new(scrollParent, name)
+function GroupBox._new(parent, name, sizeX)
     local self = setmetatable({}, GroupBox)
 
-    -- Wrapper qui grandit automatiquement
+    -- sizeX : UDim2 de largeur passé par le Tab (full ou half)
     local wrap = New("Frame", {
-        Name          = "GB_" .. name,
-        Size          = UDim2.new(1, 0, 0, 0),
-        AutomaticSize = Enum.AutomaticSize.Y,
+        Name             = "GB_" .. name,
+        Size             = sizeX,
+        AutomaticSize    = Enum.AutomaticSize.Y,
         BackgroundColor3 = T.GroupBG,
         BorderSizePixel  = 0,
         ZIndex           = 3,
-        Parent           = scrollParent,
+        Parent           = parent,
     })
     Corner(wrap, 9)
     Stroke(wrap, T.GroupBorder, 1)
 
-    -- En-tête du GroupBox
+    -- En-tête
     local head = New("Frame", {
         Name             = "Head",
         Size             = UDim2.new(1, 0, 0, 30),
@@ -169,7 +170,6 @@ function GroupBox._new(scrollParent, name)
         Parent           = wrap,
     })
     Corner(head, 9)
-    -- Aplanir les coins bas de l'en-tête
     New("Frame", {
         Size             = UDim2.new(1, 0, 0, 9),
         Position         = UDim2.new(0, 0, 1, -9),
@@ -178,7 +178,6 @@ function GroupBox._new(scrollParent, name)
         ZIndex           = 4,
         Parent           = head,
     })
-
     New("TextLabel", {
         Size                   = UDim2.new(1, -16, 1, 0),
         Position               = UDim2.new(0, 12, 0, 0),
@@ -202,7 +201,7 @@ function GroupBox._new(scrollParent, name)
         Parent           = wrap,
     })
 
-    -- Zone de contenu (les éléments atterriront ici)
+    -- Body
     local body = New("Frame", {
         Name             = "Body",
         Size             = UDim2.new(1, 0, 0, 0),
@@ -348,9 +347,33 @@ function Tab:_Deselect()
     end
 end
 
--- Crée un GroupBox dans ce tab
+-- Type 1 : pleine largeur
 function Tab:AddGroupBox(name)
-    return GroupBox._new(self._scroll, name)
+    return GroupBox._new(self._scroll, name, UDim2.new(1, 0, 0, 0))
+end
+
+-- Type 2 : deux containers côte à côte (demi-largeur)
+function Tab:AddGroupBoxRow(nameLeft, nameRight)
+    -- Ligne conteneur
+    local row = New("Frame", {
+        Name             = "Row_" .. nameLeft,
+        Size             = UDim2.new(1, 0, 0, 0),
+        AutomaticSize    = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
+        BorderSizePixel  = 0,
+        ZIndex           = 3,
+        Parent           = self._scroll,
+    })
+    New("UIListLayout", {
+        FillDirection = Enum.FillDirection.Horizontal,
+        SortOrder     = Enum.SortOrder.LayoutOrder,
+        Padding       = UDim.new(0, 8),
+        Parent        = row,
+    })
+
+    local left  = GroupBox._new(row, nameLeft,  UDim2.new(0.5, -4, 0, 0))
+    local right = GroupBox._new(row, nameRight, UDim2.new(0.5, -4, 0, 0))
+    return left, right
 end
 
 -- ═══════════════════════════════════════════════════
