@@ -148,18 +148,21 @@ function GroupBox._new(parent, name, sizeX)
     local self = setmetatable({}, GroupBox)
 
     local wrap = New("Frame", {
-        Name                   = "GB_" .. name,
-        Size                   = sizeX,
-        AutomaticSize          = Enum.AutomaticSize.Y,
-        BackgroundTransparency = 1,
-        BorderSizePixel        = 0,
-        ZIndex                 = 3,
-        Parent                 = parent,
+        Name             = "GB_" .. name,
+        Size             = sizeX,
+        AutomaticSize    = Enum.AutomaticSize.Y,
+        BackgroundColor3 = T.GroupBG,
+        BorderSizePixel  = 0,
+        ZIndex           = 3,
+        Parent           = parent,
     })
+    Corner(wrap, 8)
+    Stroke(wrap, T.GroupBorder, 1)
 
     -- Titre
     New("TextLabel", {
-        Size                   = UDim2.new(1, 0, 0, 24),
+        Size                   = UDim2.new(1, -16, 0, 28),
+        Position               = UDim2.new(0, 12, 0, 0),
         BackgroundTransparency = 1,
         Text                   = name,
         TextColor3             = T.Text,
@@ -173,8 +176,8 @@ function GroupBox._new(parent, name, sizeX)
     -- Séparateur sous le titre
     New("Frame", {
         Size             = UDim2.new(1, 0, 0, 1),
-        Position         = UDim2.new(0, 0, 0, 24),
-        BackgroundColor3 = T.Border,
+        Position         = UDim2.new(0, 0, 0, 28),
+        BackgroundColor3 = T.GroupBorder,
         BorderSizePixel  = 0,
         ZIndex           = 4,
         Parent           = wrap,
@@ -184,7 +187,7 @@ function GroupBox._new(parent, name, sizeX)
     local body = New("Frame", {
         Name                   = "Body",
         Size                   = UDim2.new(1, 0, 0, 0),
-        Position               = UDim2.new(0, 0, 0, 25),
+        Position               = UDim2.new(0, 0, 0, 29),
         AutomaticSize          = Enum.AutomaticSize.Y,
         BackgroundTransparency = 1,
         BorderSizePixel        = 0,
@@ -199,6 +202,8 @@ function GroupBox._new(parent, name, sizeX)
     New("UIPadding", {
         PaddingTop    = UDim.new(0, 8),
         PaddingBottom = UDim.new(0, 8),
+        PaddingLeft   = UDim.new(0, 10),
+        PaddingRight  = UDim.new(0, 10),
         Parent        = body,
     })
 
