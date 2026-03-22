@@ -473,7 +473,7 @@ function Window:_BuildAndPlayLoading()
     Corner(barFill, 100)
 
     -- Animation de la barre puis transition
-    Tween(barFill, { Size = UDim2.fromOffset(220, 3) }, 1.3, Enum.EasingStyle.Expo)
+    Tween(barFill, { Size = UDim2.fromOffset(220, 3) }, 1.3, Enum.EasingStyle.Exponential)
 
     task.delay(1.4, function()
         -- Fondu de sortie
