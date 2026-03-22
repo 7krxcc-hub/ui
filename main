@@ -443,7 +443,7 @@ Window.__index = Window
 local SIDEBAR_W = 150
 local WIN_W     = 720
 local WIN_H     = 460
-local TOPBAR_H  = 24
+local TOPBAR_H  = 30
 
 function Window._new(config)
     local self = setmetatable({}, Window)
@@ -787,24 +787,24 @@ function Window:_BuildTopBar(cfg)
 
     if iconAsset then
         New("ImageLabel", {
-            Size                   = UDim2.fromOffset(20, 20),
-            Position               = UDim2.new(0, 14, 0.5, -10),
+            Size                   = UDim2.fromOffset(14, 14),
+            Position               = UDim2.new(0, 10, 0.5, -7),
             BackgroundTransparency = 1,
             Image                  = iconAsset,
             ImageColor3            = T.Accent,
             ZIndex                 = 5,
             Parent                 = topBar,
         })
-        textLeft = 42
+        textLeft = 28
     end
 
     New("TextLabel", {
-        Size                   = UDim2.new(0.5, 0, 0, 17),
-        Position               = UDim2.new(0, textLeft, 0.5, -18),
+        Size                   = UDim2.new(0.5, 0, 0, 14),
+        Position               = UDim2.new(0, textLeft, 0.5, -14),
         BackgroundTransparency = 1,
         Text                   = string.upper(cfg.Name or "Script"),
         TextColor3             = T.Text,
-        TextSize               = 12,
+        TextSize               = 10,
         Font                   = Enum.Font.GothamBold,
         TextXAlignment         = Enum.TextXAlignment.Left,
         ZIndex                 = 5,
@@ -812,12 +812,12 @@ function Window:_BuildTopBar(cfg)
     })
 
     New("TextLabel", {
-        Size                   = UDim2.new(0.5, 0, 0, 13),
+        Size                   = UDim2.new(0.5, 0, 0, 11),
         Position               = UDim2.new(0, textLeft, 0.5, 1),
         BackgroundTransparency = 1,
         Text                   = cfg.Subtitle or "",
         TextColor3             = T.Muted,
-        TextSize               = 10,
+        TextSize               = 9,
         Font                   = Enum.Font.Gotham,
         TextXAlignment         = Enum.TextXAlignment.Left,
         ZIndex                 = 5,
@@ -825,8 +825,8 @@ function Window:_BuildTopBar(cfg)
     })
     -- ── Bouton réduire (tiret) ─────────────────────
     local btnMinimize = New("TextButton", {
-        Size             = UDim2.fromOffset(22, 22),
-        Position         = UDim2.new(1, -60, 0.5, -11),
+        Size             = UDim2.fromOffset(18, 18),
+        Position         = UDim2.new(1, -46, 0.5, -9),
         BackgroundColor3 = T.Item,
         Text             = "",
         BorderSizePixel  = 0,
@@ -836,8 +836,8 @@ function Window:_BuildTopBar(cfg)
     })
     Corner(btnMinimize, 100)
     New("ImageLabel", {
-        Size                   = UDim2.fromOffset(12, 12),
-        Position               = UDim2.new(0.5, -6, 0.5, -6),
+        Size                   = UDim2.fromOffset(10, 10),
+        Position               = UDim2.new(0.5, -5, 0.5, -5),
         BackgroundTransparency = 1,
         Image                  = ICO_MINUS,
         ImageColor3            = T.Muted,
@@ -854,10 +854,9 @@ function Window:_BuildTopBar(cfg)
         self:Toggle()
     end)
 
-    -- ── Bouton fermer (croix) ──────────────────────
     local btnClose = New("TextButton", {
-        Size             = UDim2.fromOffset(22, 22),
-        Position         = UDim2.new(1, -32, 0.5, -11),
+        Size             = UDim2.fromOffset(18, 18),
+        Position         = UDim2.new(1, -24, 0.5, -9),
         BackgroundColor3 = T.Item,
         Text             = "",
         BorderSizePixel  = 0,
@@ -867,8 +866,8 @@ function Window:_BuildTopBar(cfg)
     })
     Corner(btnClose, 100)
     New("ImageLabel", {
-        Size                   = UDim2.fromOffset(12, 12),
-        Position               = UDim2.new(0.5, -6, 0.5, -6),
+        Size                   = UDim2.fromOffset(10, 10),
+        Position               = UDim2.new(0.5, -5, 0.5, -5),
         BackgroundTransparency = 1,
         Image                  = ICO_X,
         ImageColor3            = T.Muted,
