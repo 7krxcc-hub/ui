@@ -254,24 +254,10 @@ function Tab._new(navFrame, contentFrame, name, icon, layoutOrder)
     })
     Corner(btn, 7)
 
-    -- Icône optionnelle
-    local textOffsetX = 10
-    if icon then
-        New("ImageLabel", {
-            Size                   = UDim2.fromOffset(15, 15),
-            Position               = UDim2.new(0, 10, 0.5, -7),
-            BackgroundTransparency = 1,
-            Image                  = "rbxassetid://" .. tostring(icon),
-            ImageColor3            = T.Muted,
-            ZIndex                 = 4,
-            Parent                 = btn,
-        })
-        textOffsetX = 30
-    end
-
+    -- Texte du tab (toujours ancré à gauche)
     local lbl = New("TextLabel", {
-        Size                   = UDim2.new(1, -(textOffsetX + 8), 1, 0),
-        Position               = UDim2.new(0, textOffsetX, 0, 0),
+        Size                   = UDim2.new(1, -32, 1, 0),
+        Position               = UDim2.new(0, 10, 0, 0),
         BackgroundTransparency = 1,
         Text                   = name,
         TextColor3             = T.Muted,
@@ -281,6 +267,20 @@ function Tab._new(navFrame, contentFrame, name, icon, layoutOrder)
         ZIndex                 = 4,
         Parent                 = btn,
     })
+
+    -- Icône à droite du nom (optionnelle)
+    local iconAsset = ResolveIcon(icon)
+    if iconAsset then
+        New("ImageLabel", {
+            Size                   = UDim2.fromOffset(14, 14),
+            Position               = UDim2.new(1, -22, 0.5, -7),
+            BackgroundTransparency = 1,
+            Image                  = iconAsset,
+            ImageColor3            = T.Muted,
+            ZIndex                 = 4,
+            Parent                 = btn,
+        })
+    end
 
     -- ── Page de contenu ───────────────────────
     local scroll = New("ScrollingFrame", {
@@ -470,24 +470,14 @@ function Window:_BuildAndPlayLoading()
     local titleOffsetY  = -40
     if loadIconAsset then
         titleOffsetY = -16
-        -- Fond de l'icône
-        local iconWrap = New("Frame", {
-            Size             = UDim2.fromOffset(52, 52),
-            Position         = UDim2.new(0.5, -26, 0.5, -90),
-            BackgroundColor3 = T.Item,
-            BorderSizePixel  = 0,
-            ZIndex           = 21,
-            Parent           = bg,
-        })
-        Corner(iconWrap, 12)
         New("ImageLabel", {
-            Size                   = UDim2.new(1, -14, 1, -14),
-            Position               = UDim2.new(0, 7, 0, 7),
+            Size                   = UDim2.fromOffset(48, 48),
+            Position               = UDim2.new(0.5, -24, 0.5, -88),
             BackgroundTransparency = 1,
             Image                  = loadIconAsset,
-            ImageColor3            = T.Accent,
-            ZIndex                 = 22,
-            Parent                 = iconWrap,
+            ImageColor3            = T.Text,
+            ZIndex                 = 21,
+            Parent                 = bg,
         })
     end
 
@@ -629,25 +619,16 @@ function Window:_BuildSidebar(cfg)
     local titleX   = 12
     local iconAsset = ResolveIcon(cfg.Icon)
     if iconAsset then
-        local iconWrap = New("Frame", {
-            Size             = UDim2.fromOffset(26, 26),
-            Position         = UDim2.new(0, 12, 0.5, -13),
-            BackgroundColor3 = T.Item,
-            BorderSizePixel  = 0,
-            ZIndex           = 4,
-            Parent           = header,
-        })
-        Corner(iconWrap, 7)
         New("ImageLabel", {
-            Size                   = UDim2.new(1, -6, 1, -6),
-            Position               = UDim2.new(0, 3, 0, 3),
+            Size                   = UDim2.fromOffset(18, 18),
+            Position               = UDim2.new(0, 12, 0.5, -9),
             BackgroundTransparency = 1,
             Image                  = iconAsset,
             ImageColor3            = T.Text,
-            ZIndex                 = 5,
-            Parent                 = iconWrap,
+            ZIndex                 = 4,
+            Parent                 = header,
         })
-        titleX = 46
+        titleX = 36
     end
 
     New("TextLabel", {
