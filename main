@@ -400,7 +400,7 @@ local Window = {}
 Window.__index = Window
 
 -- Constantes de mise en page
-local SIDEBAR_W = 200
+local SIDEBAR_W = 170
 local WIN_W     = 720
 local WIN_H     = 460
 
@@ -432,12 +432,15 @@ function Window:_BuildAndPlayLoading()
     })
 
     local bg = New("Frame", {
-        Size             = UDim2.fromScale(1, 1),
+        Size             = UDim2.fromOffset(WIN_W, WIN_H),
+        Position         = UDim2.new(0.5, -WIN_W/2, 0.5, -WIN_H/2),
         BackgroundColor3 = T.LoadBG,
         BorderSizePixel  = 0,
         ZIndex           = 20,
         Parent           = gui,
     })
+    Corner(bg, 12)
+    Stroke(bg, T.Border, 1)
 
     -- Titre
     New("TextLabel", {
@@ -725,9 +728,28 @@ function Window:_BuildTopBar(cfg)
         ZIndex           = 2,
         Parent           = self._win,
     })
-    -- Aplanir le coin gauche (jonction avec la sidebar)
+    -- Arrondir uniquement le coin haut-droit (aligne avec le corner de la fenêtre)
+    Corner(topBar, 12)
+    -- Aplanir le coin bas-gauche (jonction sidebar) et bas-droit
     New("Frame", {
-        Size             = UDim2.new(0, 12, 1, 0),
+        Size             = UDim2.new(0, 12, 0, 12),
+        Position         = UDim2.new(0, 0, 1, -12),
+        BackgroundColor3 = T.TopBar,
+        BorderSizePixel  = 0,
+        ZIndex           = 2,
+        Parent           = topBar,
+    })
+    New("Frame", {
+        Size             = UDim2.new(0, 12, 0, 12),
+        Position         = UDim2.new(1, -12, 1, -12),
+        BackgroundColor3 = T.TopBar,
+        BorderSizePixel  = 0,
+        ZIndex           = 2,
+        Parent           = topBar,
+    })
+    -- Aplanir le coin haut-gauche (jonction avec la sidebar)
+    New("Frame", {
+        Size             = UDim2.new(0, 12, 0, 12),
         BackgroundColor3 = T.TopBar,
         BorderSizePixel  = 0,
         ZIndex           = 2,
@@ -748,10 +770,13 @@ function Window:_BuildTopBar(cfg)
         Parent                 = topBar,
     })
 
-    -- ── Bouton réduire (tiret) ───────────────────
+    -- ── Bouton réduire (tiret) ─────────────────────
+    -- taille : 20×20 | gap entre boutons : 6px | marge droite : 14px
+    -- X bord droit à 14px → position X = -(14+20) = -34
+    -- Minus bord droit à 14+20+6 = 40px → position X = -(40+20) = -60
     local btnMinimize = New("TextButton", {
-        Size             = UDim2.fromOffset(22, 22),
-        Position         = UDim2.new(1, -54, 0.5, -11),
+        Size             = UDim2.fromOffset(20, 20),
+        Position         = UDim2.new(1, -60, 0.5, -10),
         BackgroundColor3 = T.Item,
         Text             = "",
         BorderSizePixel  = 0,
@@ -761,7 +786,7 @@ function Window:_BuildTopBar(cfg)
     })
     Corner(btnMinimize, 100)
     New("ImageLabel", {
-        Size                   = UDim2.fromOffset(13, 13),
+        Size                   = UDim2.fromOffset(12, 12),
         Position               = UDim2.new(0.5, -6, 0.5, -6),
         BackgroundTransparency = 1,
         Image                  = ICO_MINUS,
@@ -779,10 +804,10 @@ function Window:_BuildTopBar(cfg)
         self:Toggle()
     end)
 
-    -- ── Bouton fermer (croix) ────────────────────
+    -- ── Bouton fermer (croix) ──────────────────────
     local btnClose = New("TextButton", {
-        Size             = UDim2.fromOffset(22, 22),
-        Position         = UDim2.new(1, -26, 0.5, -11),
+        Size             = UDim2.fromOffset(20, 20),
+        Position         = UDim2.new(1, -34, 0.5, -10),
         BackgroundColor3 = T.Item,
         Text             = "",
         BorderSizePixel  = 0,
@@ -792,7 +817,7 @@ function Window:_BuildTopBar(cfg)
     })
     Corner(btnClose, 100)
     New("ImageLabel", {
-        Size                   = UDim2.fromOffset(13, 13),
+        Size                   = UDim2.fromOffset(12, 12),
         Position               = UDim2.new(0.5, -6, 0.5, -6),
         BackgroundTransparency = 1,
         Image                  = ICO_X,
