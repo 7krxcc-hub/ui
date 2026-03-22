@@ -440,10 +440,10 @@ local Window = {}
 Window.__index = Window
 
 -- Constantes de mise en page
-local SIDEBAR_W = 170
+local SIDEBAR_W = 150
 local WIN_W     = 720
 local WIN_H     = 460
-local TOPBAR_H  = 48
+local TOPBAR_H  = 38
 
 function Window._new(config)
     local self = setmetatable({}, Window)
