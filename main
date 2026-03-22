@@ -1,11 +1,11 @@
 --[[
 ╔══════════════════════════════════════════════════════╗
-║  Starlight UI Library                                ║
+║  Requiem UI Library                                ║
 ║  ModuleScript — ReplicatedStorage  OU  loadstring()  ║
 ╚══════════════════════════════════════════════════════╝
 
   Hiérarchie des objets :
-    Starlight
+    Requiem
       └─ :CreateWindow(cfg)   → Window
             └─ :AddSection(name)  → Section
                   └─ :AddTab(name, icon?)  → Tab
@@ -410,7 +410,7 @@ function Window:_BuildAndPlayLoading()
     local cfg = self._config.LoadingSettings or {}
 
     local gui = New("ScreenGui", {
-        Name           = "Starlight_Load",
+        Name           = "Requiem_Load",
         ResetOnSpawn   = false,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
         Parent         = PlayerGui,
@@ -504,7 +504,7 @@ function Window:_BuildWindow()
 
     -- ScreenGui conteneur
     self._gui = New("ScreenGui", {
-        Name           = "Starlight_" .. (cfg.Name or "UI"),
+        Name           = "Requiem_" .. (cfg.Name or "UI"),
         ResetOnSpawn   = false,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
         Parent         = PlayerGui,
@@ -857,10 +857,10 @@ function Window:Destroy()
 end
 
 -- ═══════════════════════════════════════════════════
---  MODULE PRINCIPAL : Starlight
+--  MODULE PRINCIPAL : Requiem
 -- ═══════════════════════════════════════════════════
-local Starlight = {}
-Starlight.__index = Starlight
+local Requiem = {}
+Requiem.__index = Requiem
 
 --[[
   Crée et retourne une fenêtre.
@@ -874,8 +874,8 @@ Starlight.__index = Starlight
   }
   @return Window
 --]]
-function Starlight:CreateWindow(config)
+function Requiem:CreateWindow(config)
     return Window._new(config or {})
 end
 
-return Starlight
+return Requiem
