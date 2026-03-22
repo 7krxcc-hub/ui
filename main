@@ -728,33 +728,6 @@ function Window:_BuildTopBar(cfg)
         ZIndex           = 2,
         Parent           = self._win,
     })
-    -- Arrondir uniquement le coin haut-droit (aligne avec le corner de la fenêtre)
-    Corner(topBar, 12)
-    -- Aplanir le coin bas-gauche (jonction sidebar) et bas-droit
-    New("Frame", {
-        Size             = UDim2.new(0, 12, 0, 12),
-        Position         = UDim2.new(0, 0, 1, -12),
-        BackgroundColor3 = T.TopBar,
-        BorderSizePixel  = 0,
-        ZIndex           = 2,
-        Parent           = topBar,
-    })
-    New("Frame", {
-        Size             = UDim2.new(0, 12, 0, 12),
-        Position         = UDim2.new(1, -12, 1, -12),
-        BackgroundColor3 = T.TopBar,
-        BorderSizePixel  = 0,
-        ZIndex           = 2,
-        Parent           = topBar,
-    })
-    -- Aplanir le coin haut-gauche (jonction avec la sidebar)
-    New("Frame", {
-        Size             = UDim2.new(0, 12, 0, 12),
-        BackgroundColor3 = T.TopBar,
-        BorderSizePixel  = 0,
-        ZIndex           = 2,
-        Parent           = topBar,
-    })
 
     -- Sous-titre / version
     New("TextLabel", {
