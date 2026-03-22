@@ -23,6 +23,21 @@ local LocalPlayer = Players.LocalPlayer
 local PlayerGui   = LocalPlayer:WaitForChild("PlayerGui")
 
 -- ═══════════════════════════════════════════════════
+--  ICÔNES (Lucide — chargées depuis GitHub)
+-- ═══════════════════════════════════════════════════
+local Icons = {}
+pcall(function()
+    Icons = loadstring(game:HttpGet(
+        "https://raw.githubusercontent.com/7krxcc-hub/ui/refs/heads/main/icons",
+        true
+    ))().assets
+end)
+
+-- Fallback : IDs hardcodés si le chargement échoue
+local ICO_MINUS = (Icons and Icons["lucide-minus"]) or "rbxassetid://10734896206"
+local ICO_X     = (Icons and Icons["lucide-x"])     or "rbxassetid://10747384394"
+
+-- ═══════════════════════════════════════════════════
 --  THÈME
 -- ═══════════════════════════════════════════════════
 local T = {
@@ -733,25 +748,67 @@ function Window:_BuildTopBar(cfg)
         Parent                 = topBar,
     })
 
-    -- Boutons macOS (fermer · réduire · inutilisé)
-    local dots = {
-        { Color3.fromRGB(255, 97, 92),  function() self:Destroy() end },
-        { Color3.fromRGB(255, 190, 47), function() self:Toggle()  end },
-        { Color3.fromRGB(40,  200, 64), nil                          },
-    }
-    for i, d in ipairs(dots) do
-        local btn = New("TextButton", {
-            Size             = UDim2.fromOffset(12, 12),
-            Position         = UDim2.new(1, -(16 + (i-1)*18), 0.5, -6),
-            BackgroundColor3 = d[1],
-            Text             = "",
-            BorderSizePixel  = 0,
-            ZIndex           = 4,
-            Parent           = topBar,
-        })
-        Corner(btn, 100)
-        if d[2] then btn.MouseButton1Click:Connect(d[2]) end
-    end
+    -- ── Bouton réduire (tiret) ───────────────────
+    local btnMinimize = New("TextButton", {
+        Size             = UDim2.fromOffset(22, 22),
+        Position         = UDim2.new(1, -54, 0.5, -11),
+        BackgroundColor3 = T.Item,
+        Text             = "",
+        BorderSizePixel  = 0,
+        AutoButtonColor  = false,
+        ZIndex           = 4,
+        Parent           = topBar,
+    })
+    Corner(btnMinimize, 100)
+    New("ImageLabel", {
+        Size                   = UDim2.fromOffset(13, 13),
+        Position               = UDim2.new(0.5, -6, 0.5, -6),
+        BackgroundTransparency = 1,
+        Image                  = ICO_MINUS,
+        ImageColor3            = T.Muted,
+        ZIndex                 = 5,
+        Parent                 = btnMinimize,
+    })
+    btnMinimize.MouseEnter:Connect(function()
+        Tween(btnMinimize, { BackgroundColor3 = T.ItemHover }, 0.12)
+    end)
+    btnMinimize.MouseLeave:Connect(function()
+        Tween(btnMinimize, { BackgroundColor3 = T.Item }, 0.12)
+    end)
+    btnMinimize.MouseButton1Click:Connect(function()
+        self:Toggle()
+    end)
+
+    -- ── Bouton fermer (croix) ────────────────────
+    local btnClose = New("TextButton", {
+        Size             = UDim2.fromOffset(22, 22),
+        Position         = UDim2.new(1, -26, 0.5, -11),
+        BackgroundColor3 = T.Item,
+        Text             = "",
+        BorderSizePixel  = 0,
+        AutoButtonColor  = false,
+        ZIndex           = 4,
+        Parent           = topBar,
+    })
+    Corner(btnClose, 100)
+    New("ImageLabel", {
+        Size                   = UDim2.fromOffset(13, 13),
+        Position               = UDim2.new(0.5, -6, 0.5, -6),
+        BackgroundTransparency = 1,
+        Image                  = ICO_X,
+        ImageColor3            = T.Muted,
+        ZIndex                 = 5,
+        Parent                 = btnClose,
+    })
+    btnClose.MouseEnter:Connect(function()
+        Tween(btnClose, { BackgroundColor3 = Color3.fromRGB(200, 55, 55) }, 0.12)
+    end)
+    btnClose.MouseLeave:Connect(function()
+        Tween(btnClose, { BackgroundColor3 = T.Item }, 0.12)
+    end)
+    btnClose.MouseButton1Click:Connect(function()
+        self:_ShowCloseConfirm()
+    end)
 end
 
 function Window:_BuildContent()
@@ -849,6 +906,145 @@ end
 -- Affiche / cache la fenêtre
 function Window:Toggle()
     self._win.Visible = not self._win.Visible
+end
+
+-- Dialog de confirmation avant fermeture
+function Window:_ShowCloseConfirm()
+    -- Overlay semi-transparent sur la fenêtre
+    local overlay = New("Frame", {
+        Size             = UDim2.fromScale(1, 1),
+        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+        BackgroundTransparency = 0.45,
+        BorderSizePixel  = 0,
+        ZIndex           = 20,
+        Parent           = self._win,
+    })
+
+    -- Card centrale
+    local card = New("Frame", {
+        Size             = UDim2.fromOffset(300, 140),
+        Position         = UDim2.new(0.5, -150, 0.5, -70),
+        BackgroundColor3 = T.GroupHead,
+        BorderSizePixel  = 0,
+        ZIndex           = 21,
+        Parent           = overlay,
+    })
+    Corner(card, 12)
+    Stroke(card, T.Border, 1)
+
+    -- Titre
+    New("TextLabel", {
+        Size                   = UDim2.new(1, -24, 0, 36),
+        Position               = UDim2.new(0, 12, 0, 12),
+        BackgroundTransparency = 1,
+        Text                   = "Fermer le script ?",
+        TextColor3             = T.Text,
+        TextSize               = 14,
+        Font                   = Enum.Font.GothamBold,
+        TextXAlignment         = Enum.TextXAlignment.Left,
+        ZIndex                 = 22,
+        Parent                 = card,
+    })
+
+    -- Sous-texte
+    New("TextLabel", {
+        Size                   = UDim2.new(1, -24, 0, 24),
+        Position               = UDim2.new(0, 12, 0, 46),
+        BackgroundTransparency = 1,
+        Text                   = "Cette action supprimera l'interface.",
+        TextColor3             = T.Muted,
+        TextSize               = 11,
+        Font                   = Enum.Font.Gotham,
+        TextXAlignment         = Enum.TextXAlignment.Left,
+        ZIndex                 = 22,
+        Parent                 = card,
+    })
+
+    -- Séparateur
+    New("Frame", {
+        Size             = UDim2.new(1, 0, 0, 1),
+        Position         = UDim2.new(0, 0, 0, 80),
+        BackgroundColor3 = T.Border,
+        BorderSizePixel  = 0,
+        ZIndex           = 22,
+        Parent           = card,
+    })
+
+    -- Bouton Annuler
+    local btnCancel = New("TextButton", {
+        Size             = UDim2.new(0.5, -1, 0, 40),
+        Position         = UDim2.new(0, 0, 0, 81),
+        BackgroundColor3 = T.GroupHead,
+        BackgroundTransparency = 1,
+        Text             = "Annuler",
+        TextColor3       = T.Muted,
+        TextSize         = 12,
+        Font             = Enum.Font.Gotham,
+        AutoButtonColor  = false,
+        BorderSizePixel  = 0,
+        ZIndex           = 23,
+        Parent           = card,
+    })
+    New("UICorner", { CornerRadius = UDim.new(0, 12), Parent = btnCancel })
+    -- Aplanir les coins du haut du bouton Annuler
+    New("Frame", {
+        Size             = UDim2.new(1, 0, 0, 12),
+        BackgroundColor3 = T.GroupHead,
+        BackgroundTransparency = 1,
+        BorderSizePixel  = 0,
+        ZIndex           = 22,
+        Parent           = btnCancel,
+    })
+
+    -- Séparateur vertical entre les deux boutons
+    New("Frame", {
+        Size             = UDim2.new(0, 1, 0, 40),
+        Position         = UDim2.new(0.5, 0, 0, 81),
+        BackgroundColor3 = T.Border,
+        BorderSizePixel  = 0,
+        ZIndex           = 22,
+        Parent           = card,
+    })
+
+    -- Bouton Fermer
+    local btnConfirm = New("TextButton", {
+        Size             = UDim2.new(0.5, -1, 0, 40),
+        Position         = UDim2.new(0.5, 1, 0, 81),
+        BackgroundColor3 = T.GroupHead,
+        BackgroundTransparency = 1,
+        Text             = "Fermer",
+        TextColor3       = Color3.fromRGB(235, 85, 85),
+        TextSize         = 12,
+        Font             = Enum.Font.GothamBold,
+        AutoButtonColor  = false,
+        BorderSizePixel  = 0,
+        ZIndex           = 23,
+        Parent           = card,
+    })
+    Corner(btnConfirm, 12)
+
+    -- Hover
+    btnCancel.MouseEnter:Connect(function()
+        Tween(btnCancel, { BackgroundTransparency = 0.85 }, 0.1)
+    end)
+    btnCancel.MouseLeave:Connect(function()
+        Tween(btnCancel, { BackgroundTransparency = 1 }, 0.1)
+    end)
+    btnConfirm.MouseEnter:Connect(function()
+        Tween(btnConfirm, { BackgroundTransparency = 0.85 }, 0.1)
+    end)
+    btnConfirm.MouseLeave:Connect(function()
+        Tween(btnConfirm, { BackgroundTransparency = 1 }, 0.1)
+    end)
+
+    -- Actions
+    btnCancel.MouseButton1Click:Connect(function()
+        overlay:Destroy()
+    end)
+    btnConfirm.MouseButton1Click:Connect(function()
+        overlay:Destroy()
+        self:Destroy()
+    end)
 end
 
 -- Détruit toute l'UI
