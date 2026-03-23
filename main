@@ -1,5 +1,4 @@
 -- Requiem UI Library — Main.lua
--- Source: https://raw.githubusercontent.com/7krxcc-hub/ui/refs/heads/main/main
 
 local Players          = game:GetService("Players")
 local TweenService     = game:GetService("TweenService")
@@ -136,6 +135,7 @@ function GroupBox:AddColorPicker(cfg)
     local prevColor = curColor
     local open      = false
 
+    -- Layout constants
     local PAD    = 8
     local TAB_H  = 28
     local HUE_W  = 14
@@ -145,15 +145,18 @@ function GroupBox:AddColorPicker(cfg)
     local PREV_H = 22
     local PW     = PAD*2 + SV_W + GAP + HUE_W  -- 290
 
+    -- Trigger row
     local row = New("Frame", { Size=UDim2.new(1,0,0,24), BackgroundTransparency=1, BorderSizePixel=0, ZIndex=5, Parent=self._body })
     New("TextLabel", { Size=UDim2.new(1,-56,1,0), BackgroundTransparency=1, Text=cfg.Name or "", TextColor3=T.Text, TextSize=11, Font=Enum.Font.Gotham, TextXAlignment=Enum.TextXAlignment.Left, ZIndex=6, Parent=row })
     local swatch = New("TextButton", { Size=UDim2.fromOffset(46,18), Position=UDim2.new(1,-46,0.5,-9), BackgroundColor3=curColor, Text="", AutoButtonColor=false, BorderSizePixel=0, ZIndex=6, Parent=row })
     Corner(swatch,5); Stroke(swatch,T.Border,1)
 
+    -- Popup container
     local POPUP_H = TAB_H + PAD + SV_H + PAD + PREV_H + PAD
     local popup = New("Frame", { Size=UDim2.fromOffset(PW, POPUP_H), BackgroundColor3=T.GroupHead, BorderSizePixel=0, Visible=false, ZIndex=300, Parent=self._wrap })
     Corner(popup,8); Stroke(popup,T.Border,1)
 
+    -- Tab bar
     local tabBar = New("Frame", { Size=UDim2.new(1,0,0,TAB_H), BackgroundColor3=T.GroupBG, BorderSizePixel=0, ZIndex=301, Parent=popup })
     Corner(tabBar,6)
     New("Frame", { Size=UDim2.new(1,0,0,8), Position=UDim2.new(0,0,1,-8), BackgroundColor3=T.GroupBG, BorderSizePixel=0, ZIndex=302, Parent=tabBar })
@@ -166,6 +169,7 @@ function GroupBox:AddColorPicker(cfg)
     local tabCP = MakeTab("Color Picker", PAD)
     local tabVE = MakeTab("Value Editor", PAD+HALF+4)
 
+    -- Pages
     local function MakePage(vis)
         return New("Frame", { Size=UDim2.new(1,0,1,-TAB_H), Position=UDim2.new(0,0,0,TAB_H), BackgroundTransparency=1, BorderSizePixel=0, Visible=vis, ZIndex=301, Parent=popup })
     end
@@ -173,6 +177,8 @@ function GroupBox:AddColorPicker(cfg)
     local pageVE = MakePage(false)
 
     ---- PAGE 1 : Color Picker ----
+
+    -- SV square
     local svBase = New("Frame", { Size=UDim2.fromOffset(SV_W,SV_H), Position=UDim2.fromOffset(PAD,PAD), BackgroundColor3=Color3.fromHSV(1,1,1), BorderSizePixel=0, ClipsDescendants=false, ZIndex=302, Parent=pageCP })
     Corner(svBase,5)
 
@@ -188,6 +194,9 @@ function GroupBox:AddColorPicker(cfg)
     Corner(svCursor,100); Stroke(svCursor,Color3.fromRGB(0,0,0),1.5)
 
     local svBtn = New("TextButton", { Size=UDim2.fromScale(1,1), BackgroundTransparency=1, Text="", ZIndex=307, Parent=svBase })
+
+    -- Hue bar (vertical, right side)
+    local HUE_CURSOR_D = HUE_W + 4   -- diamètre du curseur rond (légèrement plus large que la barre)
 
     local hueBar = New("Frame", { Size=UDim2.fromOffset(HUE_W,SV_H), Position=UDim2.fromOffset(PAD+SV_W+GAP,PAD), BackgroundColor3=T.White, BorderSizePixel=0, ClipsDescendants=false, ZIndex=302, Parent=pageCP })
     Corner(hueBar,4)
@@ -205,11 +214,21 @@ function GroupBox:AddColorPicker(cfg)
         g.Rotation=90; g.Parent=hueBar
     end
 
-    local hueCursor = New("Frame", { Size=UDim2.fromOffset(HUE_W+6,5), AnchorPoint=Vector2.new(0.5,0.5), BackgroundColor3=Color3.fromRGB(255,255,255), BorderSizePixel=0, ZIndex=303, Parent=hueBar })
-    Corner(hueCursor,2); Stroke(hueCursor,Color3.fromRGB(20,20,20),1)
+    -- Curseur hue : cercle coloré qui prend la teinte de sa position
+    local hueCursor = New("Frame", {
+        Size        = UDim2.fromOffset(HUE_CURSOR_D, HUE_CURSOR_D),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        BackgroundColor3 = Color3.fromHSV(1, 1, 1),
+        BorderSizePixel  = 0,
+        ZIndex      = 305,
+        Parent      = hueBar,
+    })
+    Corner(hueCursor, 100)
+    Stroke(hueCursor, Color3.fromRGB(20, 20, 20), 1.5)
 
     local hueBtn = New("TextButton", { Size=UDim2.new(1,14,1,0), Position=UDim2.fromOffset(-7,0), BackgroundTransparency=1, Text="", ZIndex=304, Parent=hueBar })
 
+    -- Preview bars
     local totalPW = SV_W + GAP + HUE_W
     local eachPW  = math.floor((totalPW - 4) / 2)
     local prevY   = PAD + SV_H + PAD
@@ -250,6 +269,7 @@ function GroupBox:AddColorPicker(cfg)
     local tbSs = VERow(pageVE,"Sat",   c2X, y2)
     local tbVv = VERow(pageVE,"Value", c2X, y3)
 
+    -- Hex row (full width)
     local hexW = PW - PAD*2
     local hexIW = hexW - LBL_W - 4
     local hexRow = New("Frame", { Size=UDim2.fromOffset(hexW,ROW_H), Position=UDim2.fromOffset(PAD,yHx), BackgroundTransparency=1, ZIndex=302, Parent=pageVE })
@@ -260,6 +280,14 @@ function GroupBox:AddColorPicker(cfg)
     tbHex.Focused:Connect(function()  TweenFast(hexBox,{BackgroundColor3=T.ItemHover},0.1) end)
     tbHex.FocusLost:Connect(function() TweenFast(hexBox,{BackgroundColor3=T.Item},0.1) end)
 
+    -- Preview bars dans Value Editor
+    local yPrevVE  = yHx + ROW_H + 6
+    local eachVEW  = math.floor((hexW - 4) / 2)
+    local prevOldVE = New("Frame", { Size=UDim2.fromOffset(eachVEW,PREV_H), Position=UDim2.fromOffset(PAD,yPrevVE), BackgroundColor3=prevColor, BorderSizePixel=0, ZIndex=302, Parent=pageVE })
+    Corner(prevOldVE,5); Stroke(prevOldVE,T.Border,1)
+    local prevNewVE = New("Frame", { Size=UDim2.fromOffset(eachVEW,PREV_H), Position=UDim2.fromOffset(PAD+eachVEW+4,yPrevVE), BackgroundColor3=curColor, BorderSizePixel=0, ZIndex=302, Parent=pageVE })
+    Corner(prevNewVE,5); Stroke(prevNewVE,T.Border,1)
+
     ---- Internal state ----
     local H, S, V = C3toHSV(curColor)
 
@@ -269,7 +297,10 @@ function GroupBox:AddColorPicker(cfg)
         svBase.BackgroundColor3   = Color3.fromHSV(H/360, 1, 1)
         svCursor.Position         = UDim2.new(S, 0, 1-V, 0)
         hueCursor.Position        = UDim2.new(0.5, 0, H/360, 0)
-        prevNew.BackgroundColor3  = curColor
+        -- Le curseur hue prend la couleur pure de la teinte courante
+        hueCursor.BackgroundColor3 = Color3.fromHSV(H/360, 1, 1)
+        prevNew.BackgroundColor3    = curColor
+        prevNewVE.BackgroundColor3  = curColor
         tbR.Text  = tostring(math.floor(curColor.R*255+.5))
         tbG.Text  = tostring(math.floor(curColor.G*255+.5))
         tbB.Text  = tostring(math.floor(curColor.B*255+.5))
@@ -320,7 +351,7 @@ function GroupBox:AddColorPicker(cfg)
         if inp.UserInputType==Enum.UserInputType.MouseButton1 then hueDrag=false end
     end)
 
-    ---- VE inputs ----
+    ---- VE inputs (apply on Enter) ----
     local function fromRGB()
         local r=math.clamp(tonumber(tbR.Text) or 0,0,255)
         local g=math.clamp(tonumber(tbG.Text) or 0,0,255)
@@ -363,7 +394,8 @@ function GroupBox:AddColorPicker(cfg)
     local closeConn
     local function openPopup()
         prevColor = curColor
-        prevOld.BackgroundColor3 = prevColor
+        prevOld.BackgroundColor3    = prevColor
+        prevOldVE.BackgroundColor3  = prevColor
         local absBtn  = swatch.AbsolutePosition
         local absWrap = self._wrap.AbsolutePosition
         local sz      = swatch.AbsoluteSize
@@ -529,8 +561,8 @@ function GroupBox:AddDropdown(cfg)
     local cont=New("Frame",{Size=UDim2.new(1,0,0,38),BackgroundTransparency=1,BorderSizePixel=0,ZIndex=5,Parent=self._body})
     New("TextLabel",{Size=UDim2.new(1,0,0,16),BackgroundTransparency=1,Text=cfg.Name or "",TextColor3=T.Text,TextSize=11,Font=Enum.Font.Gotham,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6,Parent=cont})
     local btnF=New("TextButton",{Size=UDim2.new(1,0,0,18),Position=UDim2.new(0,0,0,18),BackgroundColor3=T.Item,Text="",AutoButtonColor=false,BorderSizePixel=0,ZIndex=6,Parent=cont}); Corner(btnF,5)
-    local selLbl=New("TextLabel",{Size=UDim2.new(1,-22,1,0),Position=UDim2.new(0,7,0,0),BackgroundTransparency=1,Text=selected,TextColor3=T.Text,TextSize=11,Font=Enum.Font.Gotham,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=7,Parent=btnF})
-    local arrow=New("TextLabel",{Size=UDim2.fromOffset(14,14),Position=UDim2.new(1,-18,0.5,-7),BackgroundTransparency=1,Text="▾",TextColor3=T.Muted,TextSize=12,Font=Enum.Font.GothamBold,TextXAlignment=Enum.TextXAlignment.Center,ZIndex=7,Parent=btnF})
+    local selLbl=New("TextLabel",{Size=UDim2.new(1,-28,1,0),Position=UDim2.new(0,7,0,0),BackgroundTransparency=1,Text=selected,TextColor3=T.Text,TextSize=11,Font=Enum.Font.Gotham,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=7,Parent=btnF})
+    local arrowImg=New("ImageLabel",{Size=UDim2.fromOffset(10,10),Position=UDim2.new(1,-16,0.5,-5),BackgroundTransparency=1,Image=ResolveIcon("lucide-chevron-down") or "",ImageColor3=T.Muted,ZIndex=7,Parent=btnF})
     local ITEM_H=22; local listH=#options*ITEM_H
     local listF=New("Frame",{Size=UDim2.fromOffset(0,listH),BackgroundColor3=T.GroupHead,BorderSizePixel=0,ClipsDescendants=true,ZIndex=200,Visible=false,Parent=self._wrap}); Corner(listF,5); Stroke(listF,T.Border,1)
     New("UIListLayout",{SortOrder=Enum.SortOrder.LayoutOrder,Parent=listF})
@@ -543,22 +575,22 @@ function GroupBox:AddDropdown(cfg)
         item.MouseButton1Click:Connect(function()
             selected=opt; selLbl.Text=opt; open=false
             if closeConn2 then closeConn2:Disconnect(); closeConn2=nil end
-            listF.Visible=false; arrow.Text="▾"; TweenFast(btnF,{BackgroundColor3=T.Item},0.1); callback(opt)
+            listF.Visible=false; TweenFast(arrowImg,{Rotation=0},0.15); TweenFast(btnF,{BackgroundColor3=T.Item},0.1); callback(opt)
         end)
     end
     local function openList()
         local a=btnF.AbsolutePosition; local b=self._wrap.AbsolutePosition; local sz=btnF.AbsoluteSize
-        listF.Position=UDim2.fromOffset(a.X-b.X,a.Y-b.Y+sz.Y+2); listF.Size=UDim2.fromOffset(sz.X,listH); listF.Visible=true; arrow.Text="▴"
+        listF.Position=UDim2.fromOffset(a.X-b.X,a.Y-b.Y+sz.Y+2); listF.Size=UDim2.fromOffset(sz.X,listH); listF.Visible=true; TweenFast(arrowImg,{Rotation=180},0.15)
         closeConn2=UserInputService.InputEnded:Connect(function(inp)
             if inp.UserInputType==Enum.UserInputType.MouseButton1 then
                 local mp=UserInputService:GetMouseLocation(); local lp=listF.AbsolutePosition; local ls=listF.AbsoluteSize
                 if mp.X<lp.X or mp.X>lp.X+ls.X or mp.Y<lp.Y or mp.Y>lp.Y+ls.Y then
-                    open=false; listF.Visible=false; arrow.Text="▾"; if closeConn2 then closeConn2:Disconnect(); closeConn2=nil end
+                    open=false; listF.Visible=false; TweenFast(arrowImg,{Rotation=0},0.15); if closeConn2 then closeConn2:Disconnect(); closeConn2=nil end
                 end
             end
         end)
     end
-    btnF.MouseButton1Click:Connect(function() open=not open; if open then openList() else listF.Visible=false; arrow.Text="▾"; if closeConn2 then closeConn2:Disconnect() end end end)
+    btnF.MouseButton1Click:Connect(function() open=not open; if open then openList() else listF.Visible=false; TweenFast(arrowImg,{Rotation=0},0.15); if closeConn2 then closeConn2:Disconnect() end end end)
     btnF.MouseEnter:Connect(function() TweenFast(btnF,{BackgroundColor3=T.ItemHover},0.1) end)
     btnF.MouseLeave:Connect(function() TweenFast(btnF,{BackgroundColor3=T.Item},0.1) end)
     cont.AncestryChanged:Connect(function() if not cont.Parent then listF:Destroy(); if closeConn2 then closeConn2:Disconnect() end end end)
@@ -716,7 +748,7 @@ end
 -- ══════════════════════════════════════════
 local Window={}; Window.__index=Window
 
-local SW=150; local WW=720; local WH=460; local TH=30; local FH=18
+local SW=150; local WW=720; local WH=460; local TH=30
 
 function Window._new(cfg)
     local self=setmetatable({},Window)
@@ -744,7 +776,7 @@ function Window:_Build()
     local cfg=self._cfg
     self._gui=New("ScreenGui",{Name="Req_"..(cfg.Name or "UI"),ResetOnSpawn=false,ZIndexBehavior=Enum.ZIndexBehavior.Sibling,Parent=PlayerGui})
     self._win=New("Frame",{Name="Win",Size=UDim2.fromOffset(WW,WH),Position=UDim2.new(0.5,-WW/2,0.5,-WH/2),BackgroundColor3=T.WinBG,BorderSizePixel=0,ClipsDescendants=true,Visible=false,ZIndex=1,Parent=self._gui}); Corner(self._win,12); Stroke(self._win,T.Border,1)
-    self:_Sidebar(); self:_TopBar(); self:_Content(); self:_Footer(); self:_Settings(); self:_Drag()
+    self:_Sidebar(); self:_TopBar(); self:_Content(); self:_Settings(); self:_Drag()
 end
 
 function Window:_Sidebar()
@@ -762,6 +794,7 @@ end
 function Window:_TopBar()
     local cfg=self._cfg
     local tb=New("Frame",{Size=UDim2.new(1,0,0,TH),BackgroundColor3=T.Sidebar,BorderSizePixel=0,ZIndex=3,Parent=self._win}); Corner(tb,12)
+    self._topBar = tb
     New("Frame",{Size=UDim2.new(1,0,0,12),Position=UDim2.new(0,0,1,-12),BackgroundColor3=T.Sidebar,BorderSizePixel=0,ZIndex=3,Parent=tb})
     New("Frame",{Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,1,-1),BackgroundColor3=T.Border,BorderSizePixel=0,ZIndex=4,Parent=tb})
     local ia=ResolveIcon(cfg.Icon); local tl=14
@@ -798,32 +831,198 @@ function Window:_TopBar()
     end
 end
 
+-- ══════════════════════════════════════════
+--  Content (footer supprimé — prend toute la hauteur restante)
+-- ══════════════════════════════════════════
 function Window:_Content()
-    self._cont=New("Frame",{Name="Cont",Size=UDim2.new(1,-SW,1,-(TH+FH)),Position=UDim2.new(0,SW,0,TH),BackgroundColor3=T.Content,BorderSizePixel=0,ClipsDescendants=true,ZIndex=1,Parent=self._win}); Corner(self._cont,12)
+    self._cont=New("Frame",{Name="Cont",Size=UDim2.new(1,-SW,1,-TH),Position=UDim2.new(0,SW,0,TH),BackgroundColor3=T.Content,BorderSizePixel=0,ClipsDescendants=true,ZIndex=1,Parent=self._win}); Corner(self._cont,12)
     New("Frame",{Size=UDim2.fromOffset(12,12),BackgroundColor3=T.Content,BorderSizePixel=0,Parent=self._cont})
     New("Frame",{Size=UDim2.fromOffset(12,12),Position=UDim2.new(1,-12,0,0),BackgroundColor3=T.Content,BorderSizePixel=0,Parent=self._cont})
-end
-
-function Window:_Footer()
-    local ver=(self._cfg and self._cfg.Version) or ""
-    local f=New("Frame",{Name="Footer",Size=UDim2.new(1,-SW,0,FH),Position=UDim2.new(0,SW,1,-FH),BackgroundColor3=T.Sidebar,BorderSizePixel=0,ZIndex=3,Parent=self._win}); Corner(f,12)
-    New("Frame",{Size=UDim2.new(1,0,0,12),BackgroundColor3=T.Sidebar,BorderSizePixel=0,ZIndex=3,Parent=f})
-    New("Frame",{Size=UDim2.new(1,0,0,1),BackgroundColor3=T.Border,BorderSizePixel=0,ZIndex=4,Parent=f})
-    New("TextLabel",{Size=UDim2.new(1,0,1,-1),Position=UDim2.new(0,0,0,1),BackgroundTransparency=1,Text=ver,TextColor3=T.Label,TextSize=10,Font=Enum.Font.Gotham,TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Center,ZIndex=4,Parent=f})
 end
 
 function Window:_Settings()
     local scroll=New("ScrollingFrame",{Name="PG_Settings",Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,BorderSizePixel=0,ScrollBarThickness=3,ScrollBarImageColor3=T.ScrollBar,CanvasSize=UDim2.new(0,0,0,0),AutomaticCanvasSize=Enum.AutomaticSize.Y,Visible=false,ZIndex=2,Parent=self._cont})
     New("UIListLayout",{SortOrder=Enum.SortOrder.LayoutOrder,Padding=UDim.new(0,10),Parent=scroll})
     New("UIPadding",{PaddingTop=UDim.new(0,14),PaddingBottom=UDim.new(0,14),PaddingLeft=UDim.new(0,14),PaddingRight=UDim.new(0,14),Parent=scroll})
-    local btn=New("TextButton",{Name="TB_Settings",Size=UDim2.new(1,-16,0,32),Position=UDim2.new(0,8,0,9),BackgroundColor3=T.AccentBg,BackgroundTransparency=1,Text="",BorderSizePixel=0,AutoButtonColor=false,ZIndex=4,Parent=self._setZone}); Corner(btn,7)
-    local ia=ResolveIcon("lucide-settings"); local tl=10
-    if ia then New("ImageLabel",{Size=UDim2.fromOffset(14,14),Position=UDim2.new(0,10,0.5,-7),BackgroundTransparency=1,Image=ia,ImageColor3=T.Muted,ZIndex=5,Parent=btn}); tl=30 end
-    local lbl=New("TextLabel",{Size=UDim2.new(1,-(tl+8),1,0),Position=UDim2.new(0,tl,0,0),BackgroundTransparency=1,Text="Settings",TextColor3=T.Muted,TextSize=12,Font=Enum.Font.Gotham,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=5,Parent=btn})
+
+    -- ── Player card dans la setZone ──
+    local AVATAR_S = 34
+    local card = New("Frame", {
+        Size=UDim2.new(1,-16,0,38), Position=UDim2.new(0,8,0,8),
+        BackgroundColor3=T.GroupBG, BorderSizePixel=0, ZIndex=4, Parent=self._setZone
+    }); Corner(card,8)
+
+    -- Avatar circulaire
+    local avatarBg = New("Frame", {
+        Size=UDim2.fromOffset(AVATAR_S,AVATAR_S), Position=UDim2.fromOffset(5,2),
+        BackgroundColor3=T.Border, BorderSizePixel=0, ZIndex=5, Parent=card
+    }); Corner(avatarBg,100)
+    local avatarImg = New("ImageLabel", {
+        Size=UDim2.fromScale(1,1), BackgroundTransparency=1,
+        Image="rbxthumb://type=AvatarHeadShot&id="..LocalPlayer.UserId.."&w=48&h=48",
+        ZIndex=6, Parent=avatarBg
+    }); Corner(avatarImg,100)
+
+    -- Textes (DisplayName + @Username) avec taille de police adaptative (max 20 chars)
+    local txtX = AVATAR_S + 10
+    local EDIT_BTN_W = 16
+    local txtW = -(txtX + EDIT_BTN_W + 10)
+    local function adaptSize(text, maxS, minS, threshold)
+        local n = math.min(#text, 20)
+        if n <= threshold then return maxS end
+        return math.max(minS, math.floor(maxS - (maxS - minS) * (n - threshold) / (20 - threshold)))
+    end
+
+    local spoofDN = LocalPlayer.DisplayName
+    local spoofUN = LocalPlayer.Name
+
+    local dnLbl = New("TextLabel", {
+        Size=UDim2.new(1,txtW,0,14), Position=UDim2.fromOffset(txtX,5),
+        BackgroundTransparency=1,
+        Text=spoofDN,
+        TextColor3=T.Text, TextSize=adaptSize(spoofDN,11,7,8), Font=Enum.Font.GothamBold,
+        TextXAlignment=Enum.TextXAlignment.Left,
+        TextTruncate=Enum.TextTruncate.AtEnd, ZIndex=5, Parent=card
+    })
+    local unLbl = New("TextLabel", {
+        Size=UDim2.new(1,txtW,0,12), Position=UDim2.fromOffset(txtX,20),
+        BackgroundTransparency=1,
+        Text="@"..spoofUN,
+        TextColor3=T.Muted, TextSize=adaptSize("@"..spoofUN,9,6,8), Font=Enum.Font.Gotham,
+        TextXAlignment=Enum.TextXAlignment.Left,
+        TextTruncate=Enum.TextTruncate.AtEnd, ZIndex=5, Parent=card
+    })
+
+    -- Bouton edit (icône lucide-pencil) à droite du DisplayName
+    local editBtn = New("TextButton", {
+        Size=UDim2.fromOffset(EDIT_BTN_W, EDIT_BTN_W),
+        Position=UDim2.new(1, -(EDIT_BTN_W+4), 0, 5),
+        BackgroundTransparency=1, Text="",
+        AutoButtonColor=false, BorderSizePixel=0, ZIndex=6, Parent=card
+    })
+    local editIcon = New("ImageLabel", {
+        Size=UDim2.fromOffset(EDIT_BTN_W, EDIT_BTN_W),
+        BackgroundTransparency=1,
+        Image=ResolveIcon("lucide-pencil") or ResolveIcon("lucide-edit") or ResolveIcon("lucide-edit-2") or "",
+        ImageColor3=T.Label, ZIndex=7, Parent=editBtn
+    })
+    editBtn.MouseEnter:Connect(function() TweenFast(editIcon,{ImageColor3=T.Accent},0.1) end)
+    editBtn.MouseLeave:Connect(function() TweenFast(editIcon,{ImageColor3=T.Label},0.1) end)
+
+    -- Popup spoof
+    local POPUP_W, POPUP_H = 200, 110
+    local spoofPopup = New("Frame", {
+        Size=UDim2.fromOffset(POPUP_W, POPUP_H),
+        BackgroundColor3=T.GroupHead, BorderSizePixel=0,
+        Visible=false, ZIndex=500, Parent=self._win
+    }); Corner(spoofPopup,8); Stroke(spoofPopup,T.Border,1)
+
+    local function SpoofInput(parent, placeholder, yOff)
+        local box = New("Frame", { Size=UDim2.new(1,-16,0,22), Position=UDim2.fromOffset(8,yOff), BackgroundColor3=T.Item, BorderSizePixel=0, ZIndex=501, Parent=parent }); Corner(box,5)
+        local tb  = New("TextBox", { Size=UDim2.new(1,-10,1,0), Position=UDim2.fromOffset(5,0), BackgroundTransparency=1, Text="", PlaceholderText=placeholder, PlaceholderColor3=T.Label, TextColor3=T.Text, TextSize=10, Font=Enum.Font.Gotham, TextXAlignment=Enum.TextXAlignment.Left, ClearTextOnFocus=true, ZIndex=502, Parent=box })
+        tb.Focused:Connect(function() TweenFast(box,{BackgroundColor3=T.ItemHover},0.1) end)
+        tb.FocusLost:Connect(function() TweenFast(box,{BackgroundColor3=T.Item},0.1) end)
+        return tb
+    end
+
+    New("TextLabel", { Size=UDim2.new(1,-16,0,16), Position=UDim2.fromOffset(8,6), BackgroundTransparency=1, Text="Spoof identité", TextColor3=T.Text, TextSize=10, Font=Enum.Font.GothamBold, TextXAlignment=Enum.TextXAlignment.Left, ZIndex=501, Parent=spoofPopup })
+    local tbSpoofDN = SpoofInput(spoofPopup, "DisplayName...", 24)
+    local tbSpoofUN = SpoofInput(spoofPopup, "@Username...",   50)
+
+    local applyBtn = New("TextButton", {
+        Size=UDim2.new(1,-16,0,20), Position=UDim2.fromOffset(8,78),
+        BackgroundColor3=T.Accent, Text="Appliquer",
+        TextColor3=Color3.fromRGB(25,18,5), TextSize=10, Font=Enum.Font.GothamBold,
+        AutoButtonColor=false, BorderSizePixel=0, ZIndex=501, Parent=spoofPopup
+    }); Corner(applyBtn,5)
+    applyBtn.MouseEnter:Connect(function() TweenFast(applyBtn,{BackgroundColor3=T.AccentFg},0.1) end)
+    applyBtn.MouseLeave:Connect(function() TweenFast(applyBtn,{BackgroundColor3=T.Accent},0.1) end)
+
+    -- ── Fonctions popup (définies AVANT les callbacks qui les utilisent) ──
+    local spoofCloseConn
+    local ignoreFirstUp = false
+
+    local function closeSpoofPopup()
+        spoofPopup.Visible = false
+        ignoreFirstUp = false
+        if spoofCloseConn then spoofCloseConn:Disconnect(); spoofCloseConn = nil end
+    end
+
+    local function openSpoofPopup()
+        local absCard = card.AbsolutePosition
+        local absWin  = self._win.AbsolutePosition
+        local rx = absCard.X - absWin.X
+        local ry = absCard.Y - absWin.Y - POPUP_H - 4
+        spoofPopup.Position = UDim2.fromOffset(rx, math.max(4, ry))
+        spoofPopup.Visible  = true
+        ignoreFirstUp = true
+        if spoofCloseConn then spoofCloseConn:Disconnect(); spoofCloseConn = nil end
+        spoofCloseConn = UserInputService.InputEnded:Connect(function(inp)
+            if inp.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
+            if ignoreFirstUp then ignoreFirstUp = false; return end
+            local mp = UserInputService:GetMouseLocation()
+            local lp = spoofPopup.AbsolutePosition; local ls = spoofPopup.AbsoluteSize
+            if mp.X<lp.X or mp.X>lp.X+ls.X or mp.Y<lp.Y or mp.Y>lp.Y+ls.Y then
+                closeSpoofPopup()
+            end
+        end)
+    end
+
+    -- ── Appliquer le spoof ──
+    local function trySetHidden(inst, prop, val)
+        if sethiddenproperty then
+            pcall(sethiddenproperty, inst, prop, val)
+        elseif syn and syn.set_hidden_prop then
+            pcall(syn.set_hidden_prop, inst, prop, val)
+        else
+            pcall(rawset, inst, prop, val)
+        end
+    end
+
+    local function applyHumanoid(char, dn, un)
+        if not char then return end
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then hum.DisplayName = dn end
+        pcall(function() char.Name = un end)
+    end
+
+    applyBtn.MouseButton1Click:Connect(function()
+        local newDN = tbSpoofDN.Text ~= "" and tbSpoofDN.Text or spoofDN
+        local newUN = tbSpoofUN.Text ~= "" and tbSpoofUN.Text:gsub("^@","") or spoofUN
+        spoofDN = newDN; spoofUN = newUN
+
+        -- Labels de la card
+        dnLbl.Text = newDN
+        dnLbl.TextSize = adaptSize(newDN, 11, 7, 8)
+        unLbl.Text = "@"..newUN
+        unLbl.TextSize = adaptSize("@"..newUN, 9, 6, 8)
+
+        -- Player.Name / Player.DisplayName (PlayerList CoreGui, popups)
+        trySetHidden(LocalPlayer, "DisplayName", newDN)
+        trySetHidden(LocalPlayer, "Name",        newUN)
+
+        -- Humanoid.DisplayName + char.Name → nameplate (réplique aux autres)
+        applyHumanoid(LocalPlayer.Character, newDN, newUN)
+        if self._spoofCharConn then self._spoofCharConn:Disconnect() end
+        self._spoofCharConn = LocalPlayer.CharacterAdded:Connect(function(c)
+            task.defer(function() applyHumanoid(c, newDN, newUN) end)
+        end)
+
+        tbSpoofDN.Text = ""; tbSpoofUN.Text = ""
+        closeSpoofPopup()
+        Notify("Identité modifiée", newDN .. " / @" .. newUN, 2)
+    end)
+
+    -- ── Bouton edit ──
+    editBtn.MouseButton1Down:Connect(function()
+        if spoofPopup.Visible then closeSpoofPopup() else openSpoofPopup() end
+    end)
+
+    -- Settings tab (accessible via self.Settings pour les devs)
     local st={
-        _btn=btn,_lbl=lbl,_iconImg=btn:FindFirstChildOfClass("ImageLabel"),_scroll=scroll,_pendingRow=nil,
-        _Select=function(t) t._scroll.Visible=true; TweenFast(t._btn,{BackgroundTransparency=0.82},0.14); t._lbl.Font=Enum.Font.GothamBold; t._lbl.TextColor3=T.AccentFg; if t._iconImg then t._iconImg.ImageColor3=T.AccentFg end end,
-        _Deselect=function(t) t._scroll.Visible=false; TweenFast(t._btn,{BackgroundTransparency=1},0.14); t._lbl.Font=Enum.Font.Gotham; t._lbl.TextColor3=T.Muted; if t._iconImg then t._iconImg.ImageColor3=T.Muted end end,
+        _btn=card, _lbl=nil, _iconImg=nil, _scroll=scroll, _pendingRow=nil,
+        _Select=function(t) t._scroll.Visible=true end,
+        _Deselect=function(t) t._scroll.Visible=false end,
     }
     st.AddGroupBox=function(t,cfg2)
         if type(cfg2)=="string" then cfg2={Name=cfg2} end; cfg2=cfg2 or {}
@@ -840,27 +1039,40 @@ function Window:_Settings()
             end
         end
     end
-    btn.MouseButton1Click:Connect(function() self:_SelectTab(st) end)
-    btn.MouseEnter:Connect(function() if self._curTab~=st then TweenFast(btn,{BackgroundTransparency=0.88},0.12) end end)
-    btn.MouseLeave:Connect(function() if self._curTab~=st then TweenFast(btn,{BackgroundTransparency=1},0.12) end end)
     self._setTab=st; self.Settings=st
 end
 
 function Window:_Drag()
-    local win=self._win; local drag,ds,sp
-    win.InputBegan:Connect(function(inp)
+    local win=self._win; local tb=self._topBar
+    local drag=false; local mayDrag=false; local ds; local sp
+    local THRESHOLD = 4  -- pixels de mouvement minimum avant de démarrer le drag
+
+    tb.InputBegan:Connect(function(inp)
         if inp.UserInputType==Enum.UserInputType.MouseButton1 then
-            if self._maximized then self._maximized=false; win.Size=UDim2.fromOffset(WW,WH); win.Position=UDim2.new(0.5,-WW/2,0.5,-WH/2) end
-            drag=true; ds=inp.Position; sp=win.Position
+            mayDrag=true; drag=false; ds=inp.Position; sp=win.Position
+            if self._maximized then
+                self._maximized=false
+                win.Size=UDim2.fromOffset(WW,WH)
+                win.Position=UDim2.new(0.5,-WW/2,0.5,-WH/2)
+                sp=win.Position
+            end
         end
     end)
     UserInputService.InputChanged:Connect(function(inp)
-        if drag and inp.UserInputType==Enum.UserInputType.MouseMovement then
-            local d=inp.Position-ds; win.Position=UDim2.new(sp.X.Scale,sp.X.Offset+d.X,sp.Y.Scale,sp.Y.Offset+d.Y)
+        if mayDrag and inp.UserInputType==Enum.UserInputType.MouseMovement then
+            local d=inp.Position-ds
+            if not drag and (math.abs(d.X)+math.abs(d.Y)) >= THRESHOLD then
+                drag=true
+            end
+            if drag then
+                win.Position=UDim2.new(sp.X.Scale,sp.X.Offset+d.X,sp.Y.Scale,sp.Y.Offset+d.Y)
+            end
         end
     end)
     UserInputService.InputEnded:Connect(function(inp)
-        if inp.UserInputType==Enum.UserInputType.MouseButton1 then drag=false end
+        if inp.UserInputType==Enum.UserInputType.MouseButton1 then
+            drag=false; mayDrag=false
+        end
     end)
 end
 
@@ -901,13 +1113,9 @@ end
 function Window:Destroy() self._gui:Destroy() end
 
 -- ══════════════════════════════════════════
---  Requiem — point d'entrée public
+--  Requiem
 -- ══════════════════════════════════════════
-local Requiem = {}
-Requiem.__index = Requiem
-
-function Requiem:CreateWindow(cfg)
-    return Window._new(cfg or {})
-end
+local Requiem={}; Requiem.__index=Requiem
+function Requiem:CreateWindow(cfg) return Window._new(cfg or {}) end
 
 return Requiem
