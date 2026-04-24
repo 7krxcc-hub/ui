@@ -2329,3 +2329,6 @@ function Window:_CloseDialog()
 	bX.MouseButton1Click:Connect(function()ov:Destroy();self:Destroy()end)
 end
 function Window:Destroy()self._gui:Destroy()end
+
+-- Expose the library
+return Window
